@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Formulario que valida</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body{
+                background-color: lightblue;
+                text-align: center;
+            }
+
+            h1{
+                color: darkblue;
+                font-size: 40px;
+                font-weight: bold;
+                margin-top: 20px;
+            }
+
+            form{
+                width: 50%;
+                height: 550px;
+                margin: auto;
+                padding: 10px;
+                border: 1px solid blue;
+                background-color: darkgray;
+                display:grid;
+            }
+            label{
+                width: 90%;
+                height: 40px;
+                font-size: 20px;
+                font-weight: bold;
+                border-bottom: 1px solid black;
+                margin-top: 0px;
+                margin-left: 20px;
+                position:relative;
+                top:35px;
+                text-align: initial;
+            }
+
+            input{
+                width: 90%;
+                height: 40px;
+                font-size: 30px;
+                font-weight: bold;
+                border-radius: 5px;
+                margin-top: 20px;
+                position: relative;
+                left: 20px;
+                background-color:blue;
+                color: yellow;
+            }
+
+            input:focus{
+                background-color: yellow;
+                color: blue;
+            }
+
+            #boton:hover{
+                cursor: pointer; /* Cambia el cursor al pasar por encima */
+                background-color: yellow; /* Cambia el color de fondo al pasar el mouse */
+                color: blue;
+            }
+
+            /* Estilos para el div de resultados */
+            #resultados {
+                width: 50%;
+                margin: 20px auto;
+                padding: 15px;
+                border: 2px dashed green;
+                background-color: #e0ffe0;
+                color: darkgreen;
+                font-size: 20px;
+                font-weight: bold;
+                text-align: left;
+                display: none;
+            }
+
+            /* Estilos para los mensajes de error */
+            .error-message {
+                color: red;
+                font-size: 14px;
+                margin-left: 20px;
+                text-align: left;
+                margin-top: -15px;
+                height: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        
+        <h1>Este es mi formulario</h1>
+        
+        <form id="miFormulario" action="" method="POST" onsubmit="return validarFormulario()">
+            <label for="GET-usuario">Usuario:</label>
+            <input id="GET-usuario" type="text" name="usuario" />
+            <div id="error-usuario" class="error-message"></div> <label for="GET-email">Email:</label>
+            <input id="GET-email" type="email" name="email" />
+            <div id="error-email" class="error-message"></div> <label for="GET-contrasena">Contraseña:</label>
+            <input id="GET-contrasena" type="password" name="contrasena" />
+            <div id="error-contrasena" class="error-message"></div> <input id="boton" type="submit" value="Enviar"> 
+        </form>
+
+        <div id="resultados">
+            </div>
+
+        <script>
+            function mostrarError(elementId, message) {
+                const errorDiv = document.getElementById(elementId);
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block'; // Asegura que el div sea visible
+            }
+
+            function ocultarError(elementId) {
+                const errorDiv = document.getElementById(elementId);
+                errorDiv.textContent = '';
+                errorDiv.style.display = 'none'; // Oculta el div
+            }
+
+            function validarFormulario() {
+                // Ocultar todos los mensajes de error y resultados previos al inicio de la validación
+                ocultarError('error-usuario');
+                ocultarError('error-email');
+                ocultarError('error-contrasena');
+                document.getElementById('resultados').style.display = 'none';
+                document.getElementById('resultados').innerHTML = ''; // Limpiar contenido anterior
+
+                // 1. Obtener los valores de los inputs
+                const usuarioInput = document.getElementById('GET-usuario');
+                const emailInput = document.getElementById('GET-email');
+                const contrasenaInput = document.getElementById('GET-contrasena');
+
+                const usuario = usuarioInput.value.trim();
+                const email = emailInput.value.trim();
+                const contrasena = contrasenaInput.value.trim();
+
+                // 2. Realizar las validaciones
+                let esValido = true;
+
+                // Validación para el usuario
+                if (usuario === '') {
+                    mostrarError('error-usuario', 'Por favor, ingresa tu nombre de usuario.');
+                    usuarioInput.focus();
+                    esValido = false;
+                } else if (usuario.length < 3) {
+                    mostrarError('error-usuario', 'El usuario debe tener al menos 3 caracteres.');
+                    usuarioInput.focus();
+                    esValido = false;
+                }
+
+                // Validación para el email
+                // Solo valida si las validaciones previas no fallaron para evitar múltiples focos
+                if (esValido && email === '') {
+                    mostrarError('error-email', 'Por favor, ingresa tu correo electrónico.');
+                    emailInput.focus();
+                    esValido = false;
+                } else if (esValido && (!email.includes('@') || !email.includes('.'))) {
+                    mostrarError('error-email', 'Por favor, ingresa un correo electrónico válido.');
+                    emailInput.focus();
+                    esValido = false;
+                }
+
+                // Validación para la contraseña
+                // Solo valida si las validaciones previas no fallaron
+                if (esValido && contrasena === '') {
+                    mostrarError('error-contrasena', 'Por favor, ingresa tu contraseña.');
+                    contrasenaInput.focus();
+                    esValido = false;
+                } else if (esValido && contrasena.length < 6) {
+                    mostrarError('error-contrasena', 'La contraseña debe tener al menos 6 caracteres.');
+                    contrasenaInput.focus();
+                    esValido = false;
+                }
+
+                // 3. Mostrar resultados o errores en el div 'resultados'
+                const resultadosDiv = document.getElementById('resultados');
+                resultadosDiv.style.display = 'block'; // Asegúrate de que el div sea visible
+
+                if (esValido) {
+                    resultadosDiv.style.borderColor = 'green';
+                    resultadosDiv.style.backgroundColor = '#e0ffe0';
+                    resultadosDiv.style.color = 'darkgreen';
+                    resultadosDiv.innerHTML = '<h3>¡Formulario enviado con éxito!</h3>' +
+                                             '<p><strong>Usuario:</strong> ' + usuario + '</p>' +
+                                             '<p><strong>Email:</strong> ' + email + '</p>' +
+                                             '<p><strong>Contraseña:</strong> ' + contrasena + '</p>';
+                    
+                    return false; 
+                
+                } else {
+                    resultadosDiv.style.borderColor = 'red';
+                    resultadosDiv.style.backgroundColor = '#ffe0e0'; /* Rojo claro */
+                    resultadosDiv.style.color = 'darkred';
+                    resultadosDiv.innerHTML = '<h3>¡Error al enviar el formulario!</h3><p>Por favor, revisa los campos marcados.</p>';
+                    return false;
+                }
+            }
+        </script>
+    </body>
+</html>
